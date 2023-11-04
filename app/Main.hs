@@ -32,10 +32,10 @@ spec = do
     tmp < 27 ==> eventuallyPrev (not fan)
 
   theoremInd_ "Safety: keep turning off" do
-    alwaysBeen (tmp < 27) ==> not (eventuallyPrev fan)
+    alwaysBeen (tmp < 27) ==> alwaysBeen (not fan)
 
   theoremInd_ "Safety: keep turning on" do
-    alwaysBeen (tmp >= 29) ==> not (eventuallyPrev (not fan)) `since` previous (not fan)
+    alwaysBeen (tmp >= 29) ==> alwaysBeen fan `since` previous (not fan)
 
   let -- 28, 29, 28, 29, ...
       oscillation1 = [28 :: Word8, 29] ++ oscillation1
