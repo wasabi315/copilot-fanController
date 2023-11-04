@@ -1,0 +1,28 @@
+cabal-version:      3.0
+name:               copilot-fanController
+version:            0.1.0.0
+-- synopsis:
+-- description:
+license:            BSD-3-Clause
+license-file:       LICENSE
+author:             wasabi315
+maintainer:         wasabi.nvim.st@gmail.com
+-- copyright:
+build-type:         Simple
+extra-doc-files:    CHANGELOG.md
+-- extra-source-files:
+
+common warnings
+    ghc-options: -Wall
+
+executable copilot-fanController
+    import:           warnings
+    main-is:          Main.hs
+    -- other-modules:
+    -- other-extensions:
+    build-depends:    base ^>=4.17.2.0
+                    , copilot
+                    , copilot-c99
+                    , copilot-theorem
+    hs-source-dirs:   app
+    default-language: Haskell2010
