@@ -25,32 +25,17 @@ spec = do
 
   let theoremInd_ a b = void $ theorem a (forall b) (kInduction def z3)
 
-  -- If tmp has always been less than 27, the fan must always have been off.
-  theoremInd_ "Safety: keep turn off (1)" do
+  theoremInd_ "Liveness: eventually on" do
+    tmp >= 29 ==> eventuallyPrev fan `since` previous (not fan)
+
+  theoremInd_ "Liveness: eventually off" do
+    tmp < 27 ==> eventuallyPrev (not fan)
+
+  theoremInd_ "Safety: keep turning off" do
     alwaysBeen (tmp < 27) ==> not (eventuallyPrev fan)
 
-  -- If tmp has always been more than 28, the fan must always have been on except the 1st iteration.
-  theoremInd_ "Safety: keep turn on (1)" do
-    alwaysBeen (tmp > 28) ==> not (eventuallyPrev (not fan)) `since` previous (not fan)
-
-  let increasing s = s > ([minBound] ++ s)
-      decreasing s = s < ([maxBound] ++ s)
-
-  -- If tmp has been increasing monotonically, the fan must always have been on after the time in the past when fan became on.
-  theoremInd_ "Safety: keep turn on (2)" do
-    eventuallyPrev (alwaysBeen $ increasing tmp) ==> not (eventuallyPrev (not fan)) `since` fan
-
-  -- If tmp has been decreasing monotonically, the fan must always have been off after the time in the past when fan became off.
-  theoremInd_ "Safety: keep turn off (2)" do
-    eventuallyPrev (alwaysBeen $ decreasing tmp) ==> not (eventuallyPrev fan) `since` not fan
-
-  -- Really?
-  theoremInd_ "Liveness: eventually on" do
-    eventuallyPrev (alwaysBeen $ increasing tmp) ==> eventuallyPrev fan `since` previous (not fan)
-
-  -- Really?
-  theoremInd_ "Liveness: eventually off" do
-    eventuallyPrev (alwaysBeen $ decreasing tmp) ==> eventuallyPrev (not fan)
+  theoremInd_ "Safety: keep turning on" do
+    alwaysBeen (tmp >= 29) ==> not (eventuallyPrev (not fan)) `since` previous (not fan)
 
   let -- 28, 29, 28, 29, ...
       oscillation1 = [28 :: Word8, 29] ++ oscillation1
@@ -58,10 +43,10 @@ spec = do
       oscillation2 = [27 :: Word8, 26] ++ oscillation2
 
   theoremInd_ "Safety: hysteresis control 1" do
-    (tmp == oscillation1) ==> alwaysBeen fan `since` fan `since` not fan
+    (tmp == oscillation1) ==> alwaysBeen fan `since` fan
 
   theoremInd_ "Safety: hysteresis control 2" do
-    (tmp == oscillation2) ==> alwaysBeen (not fan) `since` not fan `since` fan
+    (tmp == oscillation2) ==> alwaysBeen (not fan) `since` not fan
 
 main :: IO ()
 main = do
